@@ -24,6 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.cst438.controller.ScheduleController;
+import com.cst438.controller.StudentController;
 import com.cst438.domain.Course;
 import com.cst438.domain.CourseRepository;
 import com.cst438.domain.Enrollment;
@@ -49,7 +50,7 @@ import org.springframework.test.context.ContextConfiguration;
  *  addFilters=false turns off security.  (I could not get security to work in test environment.)
  *  WebMvcTest is needed for test environment to create Repository classes.
  */
-@ContextConfiguration(classes = { ScheduleController.class })
+@ContextConfiguration(classes = { ScheduleController.class,StudentController.class })
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest
 public class JunitTestSchedule {
@@ -131,7 +132,7 @@ public class JunitTestSchedule {
 		
 		// verify that return status = OK (value 200) 
 		assertEquals(200, response.getStatus());
-		
+		System.out.println(response.getStatus());
 		// verify that returned data has non zero primary key
 		ScheduleDTO.CourseDTO result = fromJsonString(response.getContentAsString(), ScheduleDTO.CourseDTO.class);
 		assertNotEquals( 0  , result.id);
@@ -211,7 +212,92 @@ public class JunitTestSchedule {
 		// verify that repository delete method was called.
 		verify(enrollmentRepository).delete(any(Enrollment.class));
 	}
+	@Test
+	public void getStudent()  throws Exception{
 		
+
+		MockHttpServletResponse response;
+		
+
+
+		response = mvc.perform(
+				MockMvcRequestBuilders
+			      .get("/student?email="+TEST_STUDENT_EMAIL)
+			      .accept(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+		System.out.println("getting student");
+		System.out.println(response.getStatus());
+		// verify that return status = OK (value 200) 
+		assertEquals(200, response.getStatus());
+	}
+	@Test
+	public void addStudent()  throws Exception{
+		
+
+		MockHttpServletResponse response;
+		
+		Student student = new Student();
+		student.setEmail(TEST_STUDENT_EMAIL);
+		student.setName(TEST_STUDENT_NAME);
+		student.setStatusCode(0);
+		student.setStudent_id(1);
+		
+
+		response = mvc.perform(
+				MockMvcRequestBuilders
+			      .post("/student")
+			      .content(asJsonString(student))
+			      .contentType(MediaType.APPLICATION_JSON)
+			      .accept(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+		System.out.println(asJsonString(student));
+		System.out.println(response.getStatus());
+		// verify that return status = OK (value 200) 
+		assertEquals(200, response.getStatus());
+		verify(studentRepository).save(any(Student.class));
+	}
+	@Test
+	public void putHold()  throws Exception{
+		
+
+		MockHttpServletResponse response;
+
+		
+
+		response = mvc.perform(
+				MockMvcRequestBuilders
+				.put("/Puthold/test@csumb.edu")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+		System.out.println("HOLD");
+		System.out.println(response.getStatus());
+		// verify that return status = OK (value 200) 
+		assertEquals(200, response.getStatus());
+	}
+	@Test
+	public void releaseHold()  throws Exception{
+		
+
+		MockHttpServletResponse response;
+
+		
+
+		response = mvc.perform(
+				MockMvcRequestBuilders
+				.put("/Releasehold/test@csumb.edu")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+		System.out.println("HOLD");
+		System.out.println(response.getStatus());
+		// verify that return status = OK (value 200) 
+		assertEquals(200, response.getStatus());
+	}
 	private static String asJsonString(final Object obj) {
 		try {
 
