@@ -29,6 +29,7 @@ public class GradebookServiceMQ extends GradebookService {
 		System.out.println("MQ grade book service");
 	}
 	
+	
 	// send message to grade book service about new student enrollment in course
 	@Override
 	public void enrollStudent(String student_email, String student_name, int course_id) {
