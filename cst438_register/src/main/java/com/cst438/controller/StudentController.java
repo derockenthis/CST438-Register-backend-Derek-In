@@ -68,7 +68,7 @@ public class StudentController {
 			s.setEmail(student.getEmail());
 			s.setName(student.getName());
 			s.setStatusCode(student.getStatusCode());
-			s.setStudent_id(student.getStudent_id());
+//			s.setStudent_id(student.getStudent_id());
 			studentRepository.save(s);
 			return student;
 		}
